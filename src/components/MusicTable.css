@@ -1,95 +1,54 @@
-table.music-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #1a1a1a;
-    color: #ddd;
-    font-size: 16px;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-  }
-  
-  .music-table th,
-  .music-table td {
-    padding: 4px;
-    border: 2px solid #333;
-    text-align: center;
-    white-space: normal;     /* allow wrapping */
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-  
-  .tag {
-    font-size: 14px;
-    padding: 4px 5px;
-    margin: 3px 4px;
-    display: inline-block;
-    border-radius: 6px;
-    white-space: normal;
-    text-align: center;
-    word-break: keep-all;
-    color: #fff;
-  }
-  
-  .column-label {
-    display: inline-block;
-    white-space: normal;         /* allow wrapping */
-    overflow-wrap: break-word;   /* break only at word boundaries */
-    text-align: center;
-    line-height: 1.2;
-    word-break: keep-all;        /* don't break within words */
-  }
+.music-table {
+	width: 100%;
+	border-collapse: collapse;
+	border-radius: 5px;
+	background: #1a1a1a;
+	color: #ddd;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+.music-table th {
+	font-size: 1.2em;
+	font-weight: 700;
+}
 
-  }
-  
-  #root {
-    height: 100%;
-  }
-  
-/* Ensure root app area takes full width */
-.app-wrapper {
-    width: 100vw;           /* Full viewport width */
-    max-width: 100%;
-    padding: 0;
-    margin: 0;
-  }
-  
-  /* Wrapper around the table */
-  .table-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;       /* Optional, for safety */
-    padding:  0 16px;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Table itself */
-  .music-table {
-    width: 100%;
-    table-layout: auto; /* 👈 makes columns share width equally */
-    font-size: 12px;     /* 👈 makes everything smaller */
-    border-collapse: collapse;
-    background: #1a1a1a;
-    color: #ddd;
-    word-wrap: break-word;
-  }
+.music-table th,
+.music-table td {
+	padding: 2px 4px;
+	border: 2px solid #333;
+	text-align: center;
+	vertical-align: middle;
+	white-space: normal;
+}
 
-  .tag-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;  /* optional: center-align tags */
-    gap: 4px;
-  }
+.tag {
+	font-size: 1.15em;
+	padding: 4px 5px;
+	margin: 3px 4px;
+	display: inline-block;
+	border-radius: 4px;
+	white-space: normal;
+	text-align: center;
+	word-break: keep-all;
+	color: #fff;
+}
 
-  .music-table th {
-    white-space: nowrap;
-    padding: 4px 8px;
-    max-width: 1%;
-    width: auto;
-  }
+.column-label {
+	display: inline-block;
+	white-space: normal; /* allow wrapping */
+	overflow-wrap: break-word; /* break only at word boundaries */
+	text-align: center;
+	line-height: 1.2;
+	word-break: keep-all; /* don't break within words */
+}
 
+/* Wrapper around the table */
+.table-wrapper {
+	width: 100%;
+	max-width: 100%;
+	overflow-x: auto; /* Optional, for safety */
+	padding: 0 16px;
+	margin: 0;
+	box-sizing: border-box;
+}

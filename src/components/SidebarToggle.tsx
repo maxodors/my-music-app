@@ -1,23 +1,17 @@
-import React from "react";
-import "./SidebarToggle.css";
+import React from 'react';
 
-interface SidebarToggleProps {
-  isOpen: boolean;
-  onClick: () => void;
-}
+import { SidebarToggleProps } from '../types';
+
+import './SidebarToggle.css';
 
 const SidebarToggle: React.FC<SidebarToggleProps> = ({ isOpen, onClick }) => {
-  return (
-    <div
-      id="sidebar-toggle"
-      className={isOpen ? "open" : ""}
-      onClick={onClick}
-    >
-      <span className="icon arrow">{isOpen ? "◀" : "▶"}</span>
-      <span className="label">Фильтры</span>
-      <span className="icon folder">📁</span>
-    </div>
-  );
+	return (
+		<div id="sidebar-toggle" onClick={onClick}>
+			<span className="icon arrow">{isOpen ? '◀' : '▶'}</span>
+			<span className="label">Фильтры</span>
+			<span className="icon folder">📁</span>
+		</div>
+	);
 };
 
 export default SidebarToggle;
