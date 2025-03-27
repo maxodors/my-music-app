@@ -1,29 +1,41 @@
-import { useState } from 'react';
-import { MusicTable, SidebarPanel } from './components';
+import { useState, useMemo } from 'react';
+import MusicTable from './components/MusicTable';
+import useMusicData from './hooks/useMusicData';
+import { Filters } from './types';
+import { extractTagOptions, filterRows, isRowEmpty } from './utils/musicUtils';
+import FilterModal from './components/FilterModal';
+import { FILTER_CATEGORIES } from './constants';
 
-import useMusicData from './hooks/useMusicData.ts';
-import { Filters } from './types.ts';
-import { applyFilters } from './utils/applyFilters.ts';
-import { MantineProvider } from '@mantine/core';
-
-import './reset.css';
 import './style.css';
+import './reset.css';
+
+const columnOrder = [
+  '#', 'Title', 'Project', 'Setting', 'Timeline', 'Type', 'GenreTTRPG',
+  'Scene', 'Mood', 'Space', 'Repetitiveness', 'Volume',
+  'Tempo', 'SongGenre', 'Instruments', 'SongLength', 'Location', 'Unique', 'Comments'
+];
 
 function App() {
-	const { data, error } = useMusicData();
-	const [filters, setFilters] = useState<Filters>({});
+  const { data, error } = useMusicData();
+  const [filters, setFilters] = useState<Filters>({});
 
-	const filteredData = applyFilters(data, filters);
+  const tagOptions = useMemo(() => extractTagOptions(data, FILTER_CATEGORIES), [data]);
+  const filteredData = useMemo(() => filterRows(data, filters, columnOrder, isRowEmpty), [data, filters]);
 
-	return (
-		<>
-			<h1>🎵 Музыкальная база</h1>
-			{error && <p>{error}</p>}
+  return (
+    <>
+      <h1>🎵 Музыкальная база</h1>
+      {error && <p>{error}</p>}
 
-			<SidebarPanel data={data} filters={filters} setFilters={setFilters} />
-			<MusicTable data={filteredData} />
-		</>
-	);
+	  <FilterModal
+        filters={filters}
+        setFilters={setFilters}
+        tagOptions={tagOptions}
+      />
+
+	   <MusicTable data={filteredData} />
+    </>
+  );
 }
 
 export default App;

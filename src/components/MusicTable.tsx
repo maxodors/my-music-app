@@ -1,140 +1,114 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
+import { Table, Anchor, Text, rem, Badge } from '@mantine/core';
+import { getTagColor, isRowEmpty, filterRows } from '../utils/musicUtils';
+import { Filters } from '../types';
+import { columnOrder, columnTitles } from '../constants';
 
-import { MusicTableProps, RowData } from '../types';
+type RowData = Record<string, any>;
 
-import './MusicTable.css';
-
-const columnOrder = [
-	'#',
-	'Название',
-	'Проект',
-	'Сеттинг',
-	'Истор. Время',
-	'Тип',
-	'Жанр НРИ',
-	'Сцена',
-	'Настроение',
-	'Пространство',
-	'Репетативность',
-	'Громкость',
-	'Темп',
-	'Жанр Музыки',
-	'Длина',
-	'Местность',
-	'Разное',
-	'Комментарии',
-];
-
-const noBubbleColumns = ['Название'];
-
-const getTagColor = (tag: string) => {
-	let hash = 0;
-	for (let i = 0; i < tag.length; i++) {
-		hash = tag.charCodeAt(i) + ((hash << 5) - hash);
-	}
-	const hue = Math.abs(hash) % 360;
-	return `hsl(${hue}, 50%, 45%)`;
-};
-
-const isRowEmpty = (row: RowData) => {
-	return Object.entries(row).every(([key, val]) => {
-		if (key === 'Id' || key === '#') return true;
-		if (Array.isArray(val)) return val.length === 0;
-		if (typeof val === 'string') return val.trim() === '';
-		return val === null || val === '';
-	});
-};
-
-const renderValue = (col: string, value: any, row: RowData, index: number) => {
-	if (col === '#') return index + 1;
-
-	if (col === 'Название') {
-		const text = row['Название']?.trim() || '-';
-		const url = row['Ссылка'];
-		return url ? (
-			<a href={url} target="_blank" rel="noreferrer">
-				{text}
-			</a>
-		) : (
-			text
-		);
-	}
-
-	if (typeof value === 'string' && value.startsWith('http')) {
-		return (
-			<a href={value} target="_blank" rel="noreferrer">
-				🔗 Link
-			</a>
-		);
-	}
-
-	if (typeof value === 'string' && value.includes(',')) {
-		return value
-			.split(',')
-			.map((tag) => tag.trim())
-			.filter(Boolean)
-			.map((tag, i) => (
-				<React.Fragment key={i}>
-					<span className="tag" style={{ backgroundColor: getTagColor(tag) }}>
-						{tag}
-					</span>
-					<br />
-				</React.Fragment>
-			));
-	}
-
-	if (Array.isArray(value)) {
-		return value.filter(Boolean).map((tag, i) => (
-			<React.Fragment key={i}>
-				<span className="tag" style={{ backgroundColor: getTagColor(tag) }}>
-					{tag}
-				</span>
-				<br />
-			</React.Fragment>
-		));
-	}
-
-	const text = value?.toString().trim() || '-';
-	if (noBubbleColumns.includes(col) || text === '-') return text;
-
-	return (
-		<span className="tag" style={{ backgroundColor: getTagColor(text) }}>
-			{text}
-		</span>
-	);
-};
+interface MusicTableProps {
+  data: RowData[];
+}
 
 const MusicTable: React.FC<MusicTableProps> = ({ data }) => {
-	const visibleRows = data.filter((row) => !isRowEmpty(row));
+  const [filters, setFilters] = useState<Filters>({});
+  const visibleRows = useMemo(() => filterRows(data, filters, columnOrder, isRowEmpty), [data, filters]);
 
-	return (
-		<div className="table-wrapper">
-			<table className="music-table">
-				<thead>
-					<tr>
-						{columnOrder.map((col) => (
-							<th
-								key={col}
-								className={`column-${col
-									.replace(/\s/g, '-')
-									.replace(/[^a-zA-Z0-9-]/g, '')}`}>
-								<span className="column-label">{col}</span>
-							</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{visibleRows.map((row, rowIndex) => (
-						<tr key={rowIndex}>
-							{columnOrder.map((col) => (
-								<td key={col}>{renderValue(col, row[col], row, rowIndex)}</td>
-							))}
-						</tr>
-					))}
-				</tbody>
-			</table>
-		</div>
-	);
+  const renderValue = (col: string, value: any, row: RowData, index: number) => {
+    if (col === '#') return index + 1;
+
+    if (col === 'Title') {
+      const text = row['Title']?.trim() || '-';
+      const url = row['Link'];
+      return url ? (
+        <Anchor href={url} target="_blank" rel="noreferrer">{text}</Anchor>
+      ) : (
+        <Text>{text}</Text>
+      );
+    }
+
+    if (typeof value === 'string' && value.startsWith('http')) {
+      return <Anchor href={value} target="_blank" rel="noreferrer">🔗 Link</Anchor>;
+    }
+
+    const renderTag = (tag: string, i: number) => (
+      <Badge key={i} style={{ backgroundColor: getTagColor(tag), color: '#fff', margin: '2px' }}>
+        {tag}
+      </Badge>
+    );
+
+    if (typeof value === 'string' && value.includes(',')) {
+      return value.split(',').map((tag: string, i: number) => renderTag(tag.trim(), i));
+    }
+
+    if (Array.isArray(value)) {
+      return value.filter(Boolean).map(renderTag);
+    }
+
+    const text = value?.toString().trim() || '-';
+    if (text === '-') {
+      return <Text>{text}</Text>;
+    }
+    return renderTag(text, 0);
+  };
+
+  return (
+    <>
+      <Table
+        striped
+        highlightOnHover
+        withTableBorder
+        withColumnBorders
+        style={{
+          margin: '0 auto',
+          fontSize: rem(18),
+          borderCollapse: 'collapse',
+          textAlign: 'center',
+          verticalAlign: 'middle',
+        }}
+      >
+        <thead>
+          <tr>
+            {columnOrder.map((col) => (
+              <th
+                key={col}
+                style={{
+                  textAlign: 'center',
+                  verticalAlign: 'middle',
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  padding: '8px',
+                  border: '2px solid #ffffff',
+                }}
+              >
+                {columnTitles[col] || col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {visibleRows.map((row: RowData, rowIndex: number) => (
+            <tr key={rowIndex}>
+              {columnOrder.map((col) => (
+                <td
+                  key={col}
+                  style={{
+                    border: '2px solid #ffffff',
+                    whiteSpace: 'normal',
+                    wordBreak: 'keep-all',
+                    textAlign: 'center',
+                    verticalAlign: 'middle',
+                  }}
+                >
+                  {renderValue(col, row[col], row, rowIndex)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </>
+  );
 };
 
 export default MusicTable;

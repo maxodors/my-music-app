@@ -1,6 +1,2 @@
-import FilterPanel from './FilterPanel';
-import MusicTable from './MusicTable';
-import SidebarPanel from './SidebarPanel';
-import SidebarToggle from './SidebarToggle';
-
-export { FilterPanel, MusicTable, SidebarPanel, SidebarToggle };
+export { default as MusicTable } from './MusicTable';
+export { default as FilterModal } from './FilterModal';
