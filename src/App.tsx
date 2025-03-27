@@ -4,6 +4,7 @@ import { MusicTable, SidebarPanel } from './components';
 import useMusicData from './hooks/useMusicData.ts';
 import { Filters } from './types.ts';
 import { applyFilters } from './utils/applyFilters.ts';
+import { MantineProvider } from '@mantine/core';
 
 import './reset.css';
 import './style.css';
