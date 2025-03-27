@@ -6,7 +6,7 @@ import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider withGlobalClasses>
       <App />
     </MantineProvider>
   </StrictMode>
