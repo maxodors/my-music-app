@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 import { FilterPanel, SidebarToggle } from 'src/components';
 import { FILTER_CATEGORIES } from 'src/constants';
 import { SidebarPanelProps } from 'src/types';
+// import { FilterPanel, SidebarToggle } from '../components';
+// import { FILTER_CATEGORIES } from '../constants';
+// import { SidebarPanelProps } from '../types';
+
+// import '../components/SidebarToggle.css';
 
 const SidebarPanel: React.FC<SidebarPanelProps> = ({
 	data,
