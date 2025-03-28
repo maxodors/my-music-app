@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SidebarToggleProps } from '../types';
+import { SidebarToggleProps } from 'src/types';
 
 import './SidebarToggle.css';
 
