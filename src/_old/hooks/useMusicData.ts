@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
-import { BASE_URL, HEADERS, TABLE_ID, VIEW_ID } from 'src/constants';
-import { RowData } from 'src/types';
 
-const useMusicData = () => {
+import { API_TOKEN, BASE_URL, TABLE_ID, VIEW_ID } from '../constants';
+import { RowData } from '../types';
+
+const HEADERS = {
+	'xc-token': API_TOKEN,
+	'Content-Type': 'application/json',
+};
+
+export default function useMusicData() {
 	const [data, setData] = useState<RowData[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +33,4 @@ const useMusicData = () => {
 	}, []);
 
 	return { data, error };
-};
-
-export default useMusicData;
+}

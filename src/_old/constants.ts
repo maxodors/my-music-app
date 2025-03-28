@@ -24,6 +24,8 @@ export const FILTER_CATEGORIES = columnOrder.filter(
 	(col) => !['#', 'Title', 'Comments'].includes(col)
 );
 
+// src/config/tableConfig.ts
+
 export const columnTitles: Record<string, string> = {
 	'#': '#',
 	Title: 'Название',
@@ -44,7 +46,6 @@ export const columnTitles: Record<string, string> = {
 	Location: 'Местность',
 	Unique: 'Разное',
 	Comments: 'Комментарии',
-	Link: 'Ссылка',
 };
 
 export const COLUMN_ORDER = [
@@ -74,11 +75,6 @@ export const PROJECT_ID = 'pjpoxvsm0dvltpe';
 export const TABLE_ID = 'm4ylgz2cjhybe4r';
 export const VIEW_ID = 'vw1m1manwrq5fmp5';
 export const API_TOKEN = '5gnZxL7hkZs7X9ccjjqMmV7M17_sIDT_nedtkoAQ';
-
-export const HEADERS = {
-	'xc-token': API_TOKEN,
-	'Content-Type': 'application/json',
-};
 
 // Типовой объект из базы данных
 // {
