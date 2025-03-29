@@ -1,4 +1,6 @@
-export const columnOrder = [
+import { TableColumn } from './types';
+
+export const columnsOrder = [
 	'#',
 	'Title',
 	'Project',
@@ -20,11 +22,11 @@ export const columnOrder = [
 	'Comments',
 ];
 
-export const FILTER_CATEGORIES = columnOrder.filter(
+export const FILTER_CATEGORIES = columnsOrder.filter(
 	(col) => !['#', 'Title', 'Comments'].includes(col)
 );
 
-export const columnTitles: Record<string, string> = {
+export const columnsTitles: Record<string, string> = {
 	'#': '#',
 	Title: 'Название',
 	Project: 'Проект',
@@ -47,25 +49,25 @@ export const columnTitles: Record<string, string> = {
 	Link: 'Ссылка',
 };
 
-export const COLUMN_ORDER = [
-	'#',
-	'Название',
-	'Проект',
-	'Сеттинг',
-	'Истор. Время',
-	'Тип',
-	'Жанр НРИ',
-	'Сцена',
-	'Настроение',
-	'Пространство',
-	'Репетативность',
-	'Громкость',
-	'Темп',
-	'Жанр Музыки',
-	'Длина',
-	'Местность',
-	'Разное',
-	'Комментарии',
+export const initTableColumns: TableColumn[] = [
+	{ name: 'Название', isVisible: true },
+	{ name: 'Жанр музыки', isVisible: false },
+	{ name: 'Длина', isVisible: false },
+	{ name: 'Громкость', isVisible: false },
+	{ name: 'Истор. время', isVisible: false },
+	{ name: 'Инструменты', isVisible: false },
+	{ name: 'Тип', isVisible: true },
+	{ name: 'Темп', isVisible: true },
+	{ name: 'Сцена', isVisible: true },
+	{ name: 'Настроение', isVisible: true },
+	{ name: 'Репетативность', isVisible: true },
+	{ name: 'Проект', isVisible: false },
+	{ name: 'Жанр НРИ', isVisible: false },
+	{ name: 'Сеттинг', isVisible: false },
+	{ name: 'Пространство', isVisible: false },
+	{ name: 'Местность', isVisible: false },
+	{ name: 'Разное', isVisible: false },
+	{ name: 'Комментарии', isVisible: false },
 ];
 
 export const BASE_URL = 'https://app.nocodb.com';
@@ -79,6 +81,9 @@ export const HEADERS = {
 	'xc-token': API_TOKEN,
 	'Content-Type': 'application/json',
 };
+
+// API документация
+// https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-create
 
 // Типовой объект из базы данных
 // {

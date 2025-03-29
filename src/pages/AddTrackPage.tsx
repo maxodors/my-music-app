@@ -1,25 +1,20 @@
 import { useEffect } from 'react';
-import { API_TOKEN } from 'src/constants';
+import { PageContainer } from 'src/components';
+import { BASE_URL, HEADERS, TABLE_ID } from 'src/constants';
 
 const AddTrackPage = () => {
 	useEffect(() => {
 		async function fetchDataTags() {
 			try {
-				const res = await fetch(
-					'https://app.nocodb.com/api/v2/meta/tables/m4ylgz2cjhybe4r',
-					{
-						headers: {
-							'xc-token': API_TOKEN,
-							'Content-Type': 'application/json',
-						},
-					}
-				);
-				const json = await res.json();
-
-				json.columns.forEach((column: any) => {
-					const { column_name, dtxp } = column;
-					console.log(column_name, dtxp);
+				const res = await fetch(`${BASE_URL}/api/v2/meta/tables/${TABLE_ID}`, {
+					headers: HEADERS,
 				});
+				const json = await res.json();
+				console.log(json);
+				// json.columns.forEach((column: any) => {
+				// 	const { column_name, colOptions } = column;
+				// 	console.log(column_name, colOptions?.options);
+				// });
 			} catch (err) {
 				console.error('Fetch error:', err);
 			}
@@ -28,7 +23,11 @@ const AddTrackPage = () => {
 		fetchDataTags();
 	}, []);
 
-	return <h1>Новый трек</h1>;
+	return (
+		<PageContainer>
+			<h1>Новый трек</h1>
+		</PageContainer>
+	);
 };
 
 export default AddTrackPage;
