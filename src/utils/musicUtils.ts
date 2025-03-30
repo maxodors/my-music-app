@@ -1,3 +1,5 @@
+import { columnsTitles } from 'src/constants';
+
 export function getTagColor(tag: string): string {
 	let hash = 0;
 	for (let i = 0; i < tag.length; i++) {
@@ -74,3 +76,12 @@ export function filterRows(
 		return true;
 	});
 }
+
+export const getValueForColumnTitle = (item: any, columnTitle: string) => {
+	const columnKey = titleToColumnKey[columnTitle];
+	return item[columnKey] ?? null;
+};
+
+const titleToColumnKey: Record<string, string> = Object.fromEntries(
+	Object.entries(columnsTitles).map(([key, value]) => [value, key])
+);

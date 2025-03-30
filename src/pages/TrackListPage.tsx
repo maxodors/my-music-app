@@ -1,13 +1,12 @@
-import { Container } from '@mantine/core';
 import { useState } from 'react';
 
 import useMusicData from 'hooks/useMusicData';
-import { FilterModal, MusicTable } from 'src/components';
+import { FilterModal, MusicTable, PageContainer } from 'src/components';
 import { FILTER_CATEGORIES } from 'src/constants';
 import { Filters } from 'src/types';
 import { extractTagOptions } from 'utils/musicUtils';
 
-const MusicList = () => {
+const TrackListPage = () => {
 	const { data, error } = useMusicData();
 	const [filters, setFilters] = useState<Filters>({});
 
@@ -15,7 +14,7 @@ const MusicList = () => {
 	// const filteredData = filterRows(data, filters, columnOrder, isRowEmpty);
 
 	return (
-		<Container size="xl">
+		<PageContainer>
 			<h1>🎵 Музыкальная база</h1>
 			{error && <p>{error}</p>}
 
@@ -25,8 +24,8 @@ const MusicList = () => {
 				tagOptions={tagOptions}
 			/>
 			<MusicTable data={data} />
-		</Container>
+		</PageContainer>
 	);
 };
 
-export default MusicList;
+export default TrackListPage;

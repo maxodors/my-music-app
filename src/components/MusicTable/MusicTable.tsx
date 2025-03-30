@@ -1,80 +1,58 @@
 import { Anchor, Badge, Table } from '@mantine/core';
-import { columnTitles } from 'src/constants';
+import { useState } from 'react';
+
+import { initTableColumns } from 'src/constants';
 import { MusicTableProps } from 'src/types';
+import { getValueForColumnTitle } from 'src/utils/musicUtils';
 
-import './MusicTable.css';
+const renderBadges = (value: string | undefined) => {
+	if (!value) return null;
 
-const headers = [
-	'Название',
-	'Длина',
-	'Тип',
-	'Темп',
-	'Сцена',
-	'Настроение',
-	'Репетативность',
-	'Ссылка',
-];
+	if (value.includes(',')) {
+		return (
+			<div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+				{value.split(',').map((string, idx) => (
+					<Badge key={idx} radius="sm">
+						{string.trim()}
+					</Badge>
+				))}
+			</div>
+		);
+	}
 
-const filterByHeaders = (data: any[], headers: string[]) => {
-	return data.map((item) => {
-		const filteredItem: any = { Id: item.Id };
+	return <Badge radius="sm">{value}</Badge>;
+};
 
-		headers.forEach((header) => {
-			const englishKey = Object.keys(columnTitles).find(
-				(key) => columnTitles[key] === header
-			);
-			const actualKey = header === 'Длина' ? 'SongLength' : englishKey;
-
-			if (actualKey) {
-				filteredItem[actualKey] =
-					item[actualKey] === null ? '' : item[actualKey];
-			}
-		});
-
-		return filteredItem;
-	});
+const renderCellContent = (columnName: string, item: any) => {
+	if (columnName === 'Название') {
+		return (
+			<Anchor href={item.Link} target="_blank" rel="noreferrer">
+				{item.Title}
+			</Anchor>
+		);
+	}
+	return renderBadges(getValueForColumnTitle(item, columnName));
 };
 
 const MusicTable: React.FC<MusicTableProps> = ({ data }) => {
-	const filteredData = filterByHeaders(data, headers);
+	const [visibleColumns, setVisibleColumns] = useState(initTableColumns);
 
-	const tableColumns = headers.map((header) => {
-		if (header === 'Ссылка') return;
-		return <Table.Th key={header}>{header}</Table.Th>;
-	});
+	setVisibleColumns(visibleColumns);
 
-	const renderBadges = (value: string | undefined) => {
-		if (!value) return null;
+	const tableColumns = visibleColumns
+		.filter((column) => column.isVisible)
+		.map((column) => <Table.Th key={column.name}>{column.name}</Table.Th>);
 
-		if (value.includes(',')) {
-			return (
-				<div style={{ display: 'flex', rowGap: '3px', flexWrap: 'wrap' }}>
-					{value.split(',').map((string, idx) => (
-						<Badge key={idx} radius="sm">
-							{string.trim()}
-						</Badge>
-					))}
-				</div>
-			);
-		}
-
-		return <Badge radius="sm">{value}</Badge>;
-	};
-
-	const tableRows = filteredData.map((item) => {
+	const tableRows = data.map((item) => {
 		return (
 			<Table.Tr key={item.Id}>
-				<Table.Td>
-					<Anchor href={item.Link} target="_blank" rel="noreferrer">
-						{item.Title}
-					</Anchor>
-				</Table.Td>
-				<Table.Td>{renderBadges(item.SongLength)}</Table.Td>
-				<Table.Td>{renderBadges(item.Type)}</Table.Td>
-				<Table.Td>{renderBadges(item.Tempo)}</Table.Td>
-				<Table.Td>{renderBadges(item.Scene)}</Table.Td>
-				<Table.Td>{renderBadges(item.Mood)}</Table.Td>
-				<Table.Td>{renderBadges(item.Repetitiveness)}</Table.Td>
+				{visibleColumns
+					.filter((column) => column.isVisible)
+					.map((column) => (
+						<Table.Td key={column.name}>
+							{renderCellContent(column.name, item)}
+						</Table.Td>
+					))}
 			</Table.Tr>
 		);
 	});

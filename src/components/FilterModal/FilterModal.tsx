@@ -14,7 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 // https://tabler.io/icons
 import { useState } from 'react';
-import { columnTitles } from '../../constants';
+import { columnsTitles } from 'src/constants';
 import { Filters } from '../../types';
 
 interface FilterModalProps {
@@ -91,7 +91,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 									onClick={toggleCategory}
 									style={{ width: '100%' }}>
 									<Group justify="space-between">
-										<Text fw={500}>{columnTitles[category] || category}</Text>
+										<Text fw={500}>{columnsTitles[category] || category}</Text>
 										<Center>
 											{/* {isOpen ? (
 												<IconChevronDown size={16} />
