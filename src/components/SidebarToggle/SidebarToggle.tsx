@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { SidebarToggleProps } from '../types';
-
-import './SidebarToggle.css';
+import { SidebarToggleProps } from 'src/types';
 
 const SidebarToggle: React.FC<SidebarToggleProps> = ({ isOpen, onClick }) => {
 	return (
