@@ -10,7 +10,7 @@ const useMusicData = () => {
 		async function fetchRecords() {
 			try {
 				const res = await fetch(
-					`${BASE_URL}/api/v2/tables/${TABLE_ID}/records?offset=0&limit=100&viewId=${VIEW_ID}`,
+					`${BASE_URL}/api/v2/tables/${TABLE_ID}/records?offset=0&limit=10&viewId=${VIEW_ID}`,
 					{
 						headers: HEADERS,
 					}
