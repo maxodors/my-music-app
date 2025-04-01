@@ -143,3 +143,22 @@ export const HEADERS = {
 // });
 
 // https://meta-apis-v2.nocodb.com/#tag/Fields/operation/db-table-column-get
+
+// Добавление нового цвета для опции
+// https://app.nocodb.com/api/v2/meta/columns/{id столбца в базе данных}
+// payload для запроса - ВАЖНО! Такой запрос перезаписывает все опции в столбце, потому
+// каждый раз необходимо пересобирать объект, добавляя новые опции в конец.
+// {
+//   "colOptions": {
+//     "options": [
+//       {
+//         "title": "fetch-опция 1",
+//         "color": "#FF0000"
+//       },
+//         {
+//         "title": "fetch-опция 2",
+//         "color": "#FF0000"
+//       }
+//     ]
+//   }
+// }

@@ -1,61 +1,91 @@
 import { Anchor, Badge, Table } from '@mantine/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { initTableColumns } from 'src/constants';
-import { MusicTableProps } from 'src/types';
-import { getValueForColumnTitle } from 'src/utils/musicUtils';
+import { useMetaData } from 'src/hooks';
+import { NocoDBColumn } from 'src/types';
+import { MusicTableProps } from 'types/app';
 
-const renderBadges = (value: string | undefined) => {
-	if (!value) return null;
+const getOptionColor = (
+	column: NocoDBColumn,
+	value: string
+): string | undefined => {
+	if (!column.colOptions?.options) return undefined;
 
-	if (value.includes(',')) {
-		return (
-			<div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-				{value.split(',').map((string, idx) => (
-					<Badge key={idx} radius="sm">
-						{string.trim()}
-					</Badge>
-				))}
-			</div>
-		);
-	}
+	const option = column.colOptions.options.find(
+		(opt) => opt.title.trim() === value.trim()
+	);
 
-	return <Badge radius="sm">{value}</Badge>;
+	return option?.color;
 };
 
-const renderCellContent = (columnName: string, item: any) => {
-	if (columnName === 'Название') {
+const renderBadges = (
+	column: NocoDBColumn,
+	tag: string | string[] | undefined
+) => {
+	if (!tag) return null;
+
+	const tags = Array.isArray(tag) ? tag : tag?.split(',');
+
+	return (
+		<div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+			{tags
+				?.map((tag) => tag.trim())
+				.filter((tag) => tag)
+				.map((string, idx) => {
+					const color = getOptionColor(column, string);
+					return (
+						<Badge
+							key={idx}
+							radius="sm"
+							color={color ? color : 'gray'}
+							autoContrast>
+							{string}
+						</Badge>
+					);
+				})}
+		</div>
+	);
+};
+
+const renderCellContent = (column: NocoDBColumn, rowData: any) => {
+	if (column.title === 'Название') {
 		return (
-			<Anchor href={item.Link} target="_blank" rel="noreferrer">
-				{item.Title}
+			<Anchor href={rowData['Ссылка']} target="_blank" rel="noreferrer">
+				{rowData['Название']}
 			</Anchor>
 		);
 	}
-	return renderBadges(getValueForColumnTitle(item, columnName));
+
+	const cellValue = rowData[column.title];
+
+	return renderBadges(column, cellValue);
 };
 
 const MusicTable: React.FC<MusicTableProps> = ({ data }) => {
-	const [visibleColumns, setVisibleColumns] = useState(initTableColumns);
+	const { metaData, metaError } = useMetaData();
+	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[] | []>();
 
-	setVisibleColumns(visibleColumns);
-
-	const tableColumns = visibleColumns
-		.filter((column) => column.isVisible)
-		.map((column) => <Table.Th key={column.name}>{column.name}</Table.Th>);
-
-	const tableRows = data.map((item) => {
-		return (
-			<Table.Tr key={item.Id}>
-				{visibleColumns
-					.filter((column) => column.isVisible)
-					.map((column) => (
-						<Table.Td key={column.name}>
-							{renderCellContent(column.name, item)}
-						</Table.Td>
-					))}
-			</Table.Tr>
+	useEffect(() => {
+		setVisibleColumns(
+			metaData
+				.filter((column) => !column.system)
+				.filter((column) => column.description)
 		);
-	});
+	}, [metaData]);
+
+	const tableColumns = visibleColumns?.map((column) => (
+		<Table.Th key={column.id}>{column.title}</Table.Th>
+	));
+
+	const tableRows = data.map((row) => (
+		<Table.Tr key={row.Id}>
+			{visibleColumns?.map((column) => (
+				<Table.Td key={`${row.Id}-${column.id}`}>
+					{renderCellContent(column, row)}
+				</Table.Td>
+			))}
+		</Table.Tr>
+	));
 
 	return (
 		<Table.ScrollContainer minWidth={500}>

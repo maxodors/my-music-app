@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
-import useMusicData from 'hooks/useMusicData';
 import { FilterModal, MusicTable, PageContainer } from 'src/components';
 import { FILTER_CATEGORIES } from 'src/constants';
+import { useMusicData } from 'src/hooks';
 import { Filters } from 'src/types';
 import { extractTagOptions } from 'utils/musicUtils';
 
 const TrackListPage = () => {
 	const { data, error } = useMusicData();
+
 	const [filters, setFilters] = useState<Filters>({});
 
 	const tagOptions = extractTagOptions(data, FILTER_CATEGORIES);
