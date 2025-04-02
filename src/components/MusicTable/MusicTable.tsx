@@ -1,9 +1,7 @@
-import { Anchor, Badge, Table } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { Anchor, Badge, Table, Tooltip } from '@mantine/core';
 
-import { useMetaData } from 'src/hooks';
 import { NocoDBColumn } from 'src/types';
-import { MusicTableProps } from 'types/app';
+import { MusicTableProps, RowData } from 'types/app';
 
 const getOptionColor = (
 	column: NocoDBColumn,
@@ -18,7 +16,7 @@ const getOptionColor = (
 	return option?.color;
 };
 
-const renderBadges = (
+const renderTags = (
 	column: NocoDBColumn,
 	tag: string | string[] | undefined
 ) => {
@@ -34,20 +32,29 @@ const renderBadges = (
 				.map((string, idx) => {
 					const color = getOptionColor(column, string);
 					return (
-						<Badge
-							key={idx}
-							radius="sm"
-							color={color ? color : 'gray'}
-							autoContrast>
-							{string}
-						</Badge>
+						<Tooltip
+							label={string}
+							transitionProps={{ transition: 'rotate-left', duration: 350 }}
+							withArrow
+							position="top-start"
+							arrowPosition="side"
+							arrowOffset={6}
+							arrowSize={6}>
+							<Badge
+								key={idx}
+								radius="sm"
+								color={color ? color : 'gray'}
+								autoContrast>
+								{string}
+							</Badge>
+						</Tooltip>
 					);
 				})}
 		</div>
 	);
 };
 
-const renderCellContent = (column: NocoDBColumn, rowData: any) => {
+const renderCellContent = (column: NocoDBColumn, rowData: RowData) => {
 	if (column.title === 'Название') {
 		return (
 			<Anchor href={rowData['Ссылка']} target="_blank" rel="noreferrer">
@@ -58,28 +65,17 @@ const renderCellContent = (column: NocoDBColumn, rowData: any) => {
 
 	const cellValue = rowData[column.title];
 
-	return renderBadges(column, cellValue);
+	return renderTags(column, cellValue);
 };
 
-const MusicTable: React.FC<MusicTableProps> = ({ data }) => {
-	const { metaData, metaError } = useMetaData();
-	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[] | []>();
-
-	useEffect(() => {
-		setVisibleColumns(
-			metaData
-				.filter((column) => !column.system)
-				.filter((column) => column.description)
-		);
-	}, [metaData]);
-
-	const tableColumns = visibleColumns?.map((column) => (
+const MusicTable: React.FC<MusicTableProps> = ({ data, columns }) => {
+	const tableColumns = columns.map((column) => (
 		<Table.Th key={column.id}>{column.title}</Table.Th>
 	));
 
 	const tableRows = data.map((row) => (
 		<Table.Tr key={row.Id}>
-			{visibleColumns?.map((column) => (
+			{columns.map((column) => (
 				<Table.Td key={`${row.Id}-${column.id}`}>
 					{renderCellContent(column, row)}
 				</Table.Td>

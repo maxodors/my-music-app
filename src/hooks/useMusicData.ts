@@ -3,8 +3,8 @@ import { BASE_URL, HEADERS, TABLE_ID, VIEW_ID } from 'src/constants';
 import { RowData } from 'src/types';
 
 const useMusicData = () => {
-	const [data, setData] = useState<RowData[]>([]);
-	const [error, setError] = useState<string | null>(null);
+	const [dataCells, setData] = useState<RowData[]>([]);
+	const [dataError, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		async function fetchRecords() {
@@ -26,7 +26,7 @@ const useMusicData = () => {
 		fetchRecords();
 	}, []);
 
-	return { data, error };
+	return { dataCells, dataError };
 };
 
 export default useMusicData;

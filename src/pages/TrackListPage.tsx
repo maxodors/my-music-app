@@ -1,30 +1,63 @@
-import { useState } from 'react';
+import {
+	Center,
+	Container,
+	Group,
+	Pagination,
+	Text,
+	Title,
+} from '@mantine/core';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
-import { FilterModal, MusicTable, PageContainer } from 'src/components';
+import { ContentLoader, FilterModal, PageContainer } from 'src/components';
 import { FILTER_CATEGORIES } from 'src/constants';
-import { useMusicData } from 'src/hooks';
-import { Filters } from 'src/types';
+import { useMetaData, useMusicData } from 'src/hooks';
+import { Filters, NocoDBColumn } from 'src/types';
 import { extractTagOptions } from 'utils/musicUtils';
 
-const TrackListPage = () => {
-	const { data, error } = useMusicData();
+const MusicTable = lazy(() => import('src/components/MusicTable/MusicTable'));
 
+const TrackListPage = () => {
+	const { dataCells, dataError } = useMusicData();
+	const { metaData, metaError } = useMetaData();
+	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[]>([]);
 	const [filters, setFilters] = useState<Filters>({});
 
-	const tagOptions = extractTagOptions(data, FILTER_CATEGORIES);
+	useEffect(() => {
+		setVisibleColumns(
+			metaData
+				.filter((column) => !column.system)
+				.filter((column) => column.description)
+		);
+	}, [metaData]);
+
+	const tagOptions = extractTagOptions(dataCells, FILTER_CATEGORIES);
 	// const filteredData = filterRows(data, filters, columnOrder, isRowEmpty);
 
 	return (
 		<PageContainer>
-			<h1>🎵 Музыкальная база</h1>
-			{error && <p>{error}</p>}
+			<Title order={1}>🎵 Музыкальная база</Title>
 
-			<FilterModal
-				filters={filters}
-				setFilters={setFilters}
-				tagOptions={tagOptions}
-			/>
-			<MusicTable data={data} />
+			<Group justify="flex-end">
+				<FilterModal
+					filters={filters}
+					setFilters={setFilters}
+					tagOptions={tagOptions}
+				/>
+			</Group>
+
+			<Container size="xl" h={'80%'} p={0}>
+				<Suspense fallback={<ContentLoader />}>
+					{metaError || dataError ? (
+						<Text>{dataError ? dataError : metaError}</Text>
+					) : (
+						<MusicTable data={dataCells} columns={visibleColumns} />
+					)}
+				</Suspense>
+			</Container>
+
+			<Center>
+				<Pagination total={10} siblings={2} disabled />
+			</Center>
 		</PageContainer>
 	);
 };

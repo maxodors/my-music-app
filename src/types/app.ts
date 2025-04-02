@@ -1,3 +1,5 @@
+import { NocoDBColumn } from './api';
+
 export type FilterMode = 0 | 1 | 2; // 0 = none, 1 = include, 2 = exclude
 
 export type RowData = Record<string, any>;
@@ -6,6 +8,7 @@ export type Filters = Record<string, Record<string, FilterMode>>;
 
 export interface MusicTableProps {
 	data: RowData[];
+	columns: NocoDBColumn[];
 }
 
 export type TableColumn = {

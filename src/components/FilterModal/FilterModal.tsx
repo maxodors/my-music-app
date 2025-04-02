@@ -121,7 +121,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 				</Stack>
 			</Modal>
 
-			<Button onClick={toggle} mt="md">
+			<Button onClick={toggle}>
 				{opened ? '❌ Закрыть фильтры' : '📁 Открыть фильтры'}
 			</Button>
 		</>
