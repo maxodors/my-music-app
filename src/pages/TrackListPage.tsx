@@ -9,22 +9,36 @@ import {
   import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
   
   import { ContentLoader, FilterModal, PageContainer } from 'src/components';
-  import { FILTER_CATEGORIES } from 'src/constants';
-  import { useMetaData, useMusicData } from 'src/hooks';
-  import { Filters, NocoDBColumn, RowData } from 'src/types';
+  import { useMetaData } from 'src/hooks';
   import { useTagOptionsFromMeta } from 'src/hooks/useTagOptionsFromMeta';
-  import { applyFilters } from 'src/utils/applyFilters';
+  import { useFilteredTracks } from 'src/hooks/useFilteredTracks';
+  import { Filters, NocoDBColumn } from 'src/types';
   
   const MusicTable = lazy(() => import('src/components/MusicTable/MusicTable'));
   
   const TrackListPage = () => {
-	const { dataCells, dataError } = useMusicData();
 	const { metaData, metaError } = useMetaData();
-	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[]>([]);
+	const { tagOptions, error: tagError } = useTagOptionsFromMeta();
+  
 	const [filters, setFilters] = useState<Filters>({});
-	
-	const { tagOptions, loading, error } = useTagOptionsFromMeta();
-
+	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[]>([]);
+	const [page, setPage] = useState(1);
+	const limit = 10;
+  
+	const {
+	  results: filteredData,
+	  total,
+	  page: safePage,
+	  loading,
+	  error,
+	} = useFilteredTracks({
+	  filters,
+	  page,
+	  limit,
+	  sortOrder: 'asc',
+	});
+  
+	// Update columns
 	useEffect(() => {
 	  setVisibleColumns(
 		metaData
@@ -32,45 +46,26 @@ import {
 		  .filter((column) => column.description)
 	  );
 	}, [metaData]);
-
-	const processedData = useMemo(() => {
-	  if (!dataCells) return [];
   
-	  return dataCells.map((row) => {
-		const newRow: RowData = { ...row };
+	// Reset to page 1 when filters change
+	useEffect(() => {
+	  setPage(1);
+	}, [JSON.stringify(filters)]);
   
-		for (const category of FILTER_CATEGORIES) {
-		  let value = newRow[category];
-  
-		  if (typeof value === 'string') {
-			newRow[category] = value
-			  .split(',')
-			  .map((s) => s.trim())
-			  .filter(Boolean);
-		  }
-		}
-  
-		return newRow;
-	  });
-	}, [dataCells]);
-  
-	const filteredData = useMemo(() => {
-	  if (!processedData) return [];
-	  const result = applyFilters(processedData, filters);
-  
-	  if (process.env.NODE_ENV !== 'production') {
-		console.debug('[Filter] Filters:', filters);
-		console.debug(`[Filter] Showing ${result.length} / ${processedData.length} tracks`);
+	// Sync frontend page with backend-safePage
+	useEffect(() => {
+	  if (page !== safePage) {
+		setPage(safePage);
 	  }
+	}, [safePage]);
   
-	  return result;
-	}, [processedData, filters]);
+	const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
   
 	return (
 	  <PageContainer>
 		<Title order={1}>🎵 Музыкальная база</Title>
-		
-		<Group justify="flex-end">
+  
+		<Group justify="flex-end" mb="md">
 		  <FilterModal
 			filters={filters}
 			setFilters={setFilters}
@@ -80,9 +75,15 @@ import {
   
 		<Container size="xl" h="80%" p={0}>
 		  <Suspense fallback={<ContentLoader />}>
-			{metaError || dataError ? (
-			  <Text>{dataError || metaError}</Text>
-			) : filteredData.length === 0 ? (
+			{error || metaError || tagError ? (
+			  <Text color="red">
+				{error?.toString() ||
+				  metaError?.toString() ||
+				  tagError?.toString()}
+			  </Text>
+			) : loading ? (
+			  <ContentLoader />
+			) : !filteredData || filteredData.length === 0 ? (
 			  <Text mt="lg" c="dimmed">
 				Ничего не найдено по текущим фильтрам.
 			  </Text>
@@ -92,8 +93,14 @@ import {
 		  </Suspense>
 		</Container>
   
-		<Center>
-		  <Pagination total={10} siblings={2} disabled />
+		<Center mt="lg">
+		  <Pagination
+			total={totalPages}
+			value={page}
+			onChange={setPage}
+			siblings={2}
+			disabled={loading}
+		  />
 		</Center>
 	  </PageContainer>
 	);

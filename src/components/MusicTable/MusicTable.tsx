@@ -56,12 +56,16 @@ const renderTags = (
 
 const renderCellContent = (column: NocoDBColumn, rowData: RowData) => {
 	if (column.title === 'Название') {
+		const href = Array.isArray(rowData['Ссылка'])
+		  ? rowData['Ссылка'][0]
+		  : rowData['Ссылка'];
+	  
 		return (
-			<Anchor href={rowData['Ссылка']} target="_blank" rel="noreferrer">
-				{rowData['Название']}
-			</Anchor>
+		  <Anchor href={href} target="_blank" rel="noreferrer">
+			{rowData['Название']}
+		  </Anchor>
 		);
-	}
+	  }
 
 	const cellValue = rowData[column.title];
 
@@ -73,7 +77,9 @@ const MusicTable: React.FC<MusicTableProps> = ({ data, columns }) => {
 		<Table.Th key={column.id}>{column.title}</Table.Th>
 	));
 
-	const tableRows = data.map((row) => (
+	const tableRows = data
+  .filter((row) => row && row['Название'])
+  .map((row) => (
 		<Table.Tr key={row.Id}>
 			{columns.map((column) => (
 				<Table.Td key={`${row.Id}-${column.id}`}>
