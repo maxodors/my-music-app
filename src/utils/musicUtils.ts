@@ -1,4 +1,5 @@
 import { columnsTitles } from 'src/constants';
+import { RowData } from 'types/app';
 
 export function getTagColor(tag: string): string {
 	let hash = 0;
@@ -19,32 +20,38 @@ export function isRowEmpty(row: Record<string, any>): boolean {
 }
 
 export function extractTagOptions(
-	data: Record<string, any>[],
-	columnOrder: string[],
-	skipColumns: string[] = []
+	data: RowData[],
+	categories: string[]
 ): Record<string, string[]> {
-	const tags: Record<string, Set<string>> = {};
+	const options: Record<string, Set<string>> = {};
 
-	data.forEach((row) => {
-		columnOrder.forEach((col) => {
-			if (skipColumns.includes(col)) return; // ✅ skip non-tag columns
+	for (const category of categories) {
+		options[category] = new Set();
 
-			const val = row[col];
-			if (!val) return;
+		for (const row of data) {
+			let rawValue = row[category];
 
-			const values = Array.isArray(val) ? val : val.toString().split(',');
-			values.forEach((v: string) => {
-				const clean = v.trim();
-				if (!clean) return;
-				tags[col] = tags[col] || new Set();
-				tags[col].add(clean);
-			});
-		});
-	});
+			if (typeof rawValue === 'string') {
+				rawValue = rawValue.split(',').map((s) => s.trim());
+			}
 
-	return Object.fromEntries(
-		Object.entries(tags).map(([k, v]) => [k, Array.from(v)])
-	);
+			if (Array.isArray(rawValue)) {
+				for (const val of rawValue) {
+					if (val) options[category].add(val);
+				}
+			}
+		}
+	}
+
+	// Convert Sets to sorted arrays
+	const result: Record<string, string[]> = {};
+	for (const key in options) {
+		result[key] = Array.from(options[key]).sort((a, b) =>
+			a.localeCompare(b, 'ru')
+		);
+	}
+
+	return result;
 }
 
 export function filterRows(
@@ -71,7 +78,6 @@ export function filterRows(
 				if (state === 2 && match) return false;
 			}
 		}
-		// console.log('applying filters:', filters);
 
 		return true;
 	});

@@ -22,10 +22,6 @@ export const columnsOrder = [
 	'Comments',
 ];
 
-export const FILTER_CATEGORIES = columnsOrder.filter(
-	(col) => !['#', 'Title', 'Comments'].includes(col)
-);
-
 export const columnsTitles: Record<string, string> = {
 	'#': '#',
 	Title: 'Название',
@@ -69,6 +65,10 @@ export const initTableColumns: TableColumn[] = [
 	{ name: 'Разное', isVisible: false },
 	{ name: 'Комментарии', isVisible: false },
 ];
+
+export const FILTER_CATEGORIES = columnsOrder
+  .filter((col) => !['#', 'Title', 'Comments'].includes(col))
+  .map((col) => columnsTitles[col]);
 
 export const BASE_URL = 'https://app.nocodb.com';
 export const ORGS = 'wl8lp0fk';
