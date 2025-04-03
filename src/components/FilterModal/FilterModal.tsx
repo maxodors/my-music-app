@@ -206,7 +206,7 @@ import {
 		  </Stack>
 		</Modal>
   
-		<Button onClick={toggle} mt="md" fullWidth>
+		<Button onClick={toggle} >
 		  {opened ? '❌ Закрыть фильтры' : '📁 Открыть фильтры'}
 		</Button>
 	  </>
