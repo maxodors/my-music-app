@@ -12,7 +12,7 @@ import {
   import { FILTER_CATEGORIES } from 'src/constants';
   import { useMetaData, useMusicData } from 'src/hooks';
   import { Filters, NocoDBColumn, RowData } from 'src/types';
-  import { extractTagOptions } from 'utils/musicUtils';
+  import { useTagOptionsFromMeta } from 'src/hooks/useTagOptionsFromMeta';
   import { applyFilters } from 'src/utils/applyFilters';
   
   const MusicTable = lazy(() => import('src/components/MusicTable/MusicTable'));
@@ -22,7 +22,9 @@ import {
 	const { metaData, metaError } = useMetaData();
 	const [visibleColumns, setVisibleColumns] = useState<NocoDBColumn[]>([]);
 	const [filters, setFilters] = useState<Filters>({});
-  
+	
+	const { tagOptions, loading, error } = useTagOptionsFromMeta();
+
 	useEffect(() => {
 	  setVisibleColumns(
 		metaData
@@ -30,9 +32,7 @@ import {
 		  .filter((column) => column.description)
 	  );
 	}, [metaData]);
-  
-	const tagOptions = extractTagOptions(dataCells, FILTER_CATEGORIES);
-  
+
 	const processedData = useMemo(() => {
 	  if (!dataCells) return [];
   
@@ -69,7 +69,7 @@ import {
 	return (
 	  <PageContainer>
 		<Title order={1}>🎵 Музыкальная база</Title>
-  
+		
 		<Group justify="flex-end">
 		  <FilterModal
 			filters={filters}

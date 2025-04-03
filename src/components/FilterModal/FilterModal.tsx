@@ -108,7 +108,9 @@ import {
 	useEffect(() => {
 	  if (search.trim()) setShowDropdown(true);
 	}, [search]);
-  
+	
+	console.log('📦 FilterModal received tagOptions:', tagOptions);
+
 	return (
 	  <>
 		<Modal

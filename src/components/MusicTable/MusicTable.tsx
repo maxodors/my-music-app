@@ -29,10 +29,11 @@ const renderTags = (
 			{tags
 				?.map((tag) => tag.trim())
 				.filter((tag) => tag)
-				.map((string, idx) => {
+				.map((string) => {
 					const color = getOptionColor(column, string);
 					return (
 						<Tooltip
+							key={string}
 							label={string}
 							transitionProps={{ transition: 'rotate-left', duration: 350 }}
 							withArrow
@@ -41,7 +42,6 @@ const renderTags = (
 							arrowOffset={6}
 							arrowSize={6}>
 							<Badge
-								key={idx}
 								radius="sm"
 								color={color ? color : 'gray'}
 								autoContrast>
