@@ -38,7 +38,6 @@ import {
 	  sortOrder: 'asc',
 	});
   
-	// Update columns
 	useEffect(() => {
 	  setVisibleColumns(
 		metaData
@@ -47,12 +46,10 @@ import {
 	  );
 	}, [metaData]);
   
-	// Reset to page 1 when filters change
 	useEffect(() => {
 	  setPage(1);
 	}, [JSON.stringify(filters)]);
   
-	// Sync frontend page with backend-safePage
 	useEffect(() => {
 	  if (page !== safePage) {
 		setPage(safePage);
@@ -88,7 +85,7 @@ import {
 				Ничего не найдено по текущим фильтрам.
 			  </Text>
 			) : (
-			  <MusicTable data={filteredData} columns={visibleColumns} />
+			  <MusicTable rows={filteredData} columns={visibleColumns} />
 			)}
 		  </Suspense>
 		</Container>

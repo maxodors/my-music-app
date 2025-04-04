@@ -3,7 +3,7 @@ import { NocoDBColumn } from './api';
 export type FilterMode = 0 | 1 | 2; // 0 = none, 1 = include, 2 = exclude
 
 export interface MusicTableProps {
-	data: RowData[];
+	rows: RowData[];
 	columns: NocoDBColumn[];
 }
 

@@ -1,5 +1,9 @@
-const SongTableItem = () => {
-	return <div>Песенка</div>;
+const MusicTableItem = () => {
+	return (
+		<div style={{ display: 'flex', justifyContent: 'center' }}>
+			<p>Карточка песенки. ВУА!</p>
+		</div>
+	);
 };
 
-export default SongTableItem;
+export default MusicTableItem;

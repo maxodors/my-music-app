@@ -1,5 +1,7 @@
-import { Anchor, Badge, Table, Tooltip } from '@mantine/core';
+import { Anchor, Badge, HoverCard, Table, Tooltip } from '@mantine/core';
+import { memo } from 'react';
 
+import { MusicTableItem } from 'src/components';
 import { NocoDBColumn } from 'src/types';
 import { MusicTableProps, RowData } from 'types/app';
 
@@ -41,10 +43,7 @@ const renderTags = (
 							arrowPosition="side"
 							arrowOffset={6}
 							arrowSize={6}>
-							<Badge
-								radius="sm"
-								color={color ? color : 'gray'}
-								autoContrast>
+							<Badge radius="sm" color={color ?? 'gray'} autoContrast>
 								{string}
 							</Badge>
 						</Tooltip>
@@ -57,37 +56,49 @@ const renderTags = (
 const renderCellContent = (column: NocoDBColumn, rowData: RowData) => {
 	if (column.title === 'Название') {
 		const href = Array.isArray(rowData['Ссылка'])
-		  ? rowData['Ссылка'][0]
-		  : rowData['Ссылка'];
-	  
+			? rowData['Ссылка'][0]
+			: rowData['Ссылка'];
+
 		return (
-		  <Anchor href={href} target="_blank" rel="noreferrer">
-			{rowData['Название']}
-		  </Anchor>
+			<HoverCard
+				width={600}
+				offset={-8}
+				position="right"
+				shadow="0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12)">
+				<HoverCard.Target>
+					<div>
+						<Anchor href={href} target="_blank" rel="noreferrer">
+							{rowData['Название']}
+						</Anchor>
+					</div>
+				</HoverCard.Target>
+				<HoverCard.Dropdown>
+					<MusicTableItem />
+				</HoverCard.Dropdown>
+			</HoverCard>
 		);
-	  }
+	}
 
 	const cellValue = rowData[column.title];
-
 	return renderTags(column, cellValue);
 };
 
-const MusicTable: React.FC<MusicTableProps> = ({ data, columns }) => {
+const MusicTable: React.FC<MusicTableProps> = ({ rows, columns }) => {
 	const tableColumns = columns.map((column) => (
 		<Table.Th key={column.id}>{column.title}</Table.Th>
 	));
 
-	const tableRows = data
-  .filter((row) => row && row['Название'])
-  .map((row) => (
-		<Table.Tr key={row.Id}>
-			{columns.map((column) => (
-				<Table.Td key={`${row.Id}-${column.id}`}>
-					{renderCellContent(column, row)}
-				</Table.Td>
-			))}
-		</Table.Tr>
-	));
+	const tableRows = rows
+		.filter((row) => row && row['Название'])
+		.map((row) => (
+			<Table.Tr key={row.Id}>
+				{columns.map((column) => (
+					<Table.Td key={`${row.Id}-${column.id}`}>
+						{renderCellContent(column, row)}
+					</Table.Td>
+				))}
+			</Table.Tr>
+		));
 
 	return (
 		<Table.ScrollContainer minWidth={500}>
@@ -98,7 +109,7 @@ const MusicTable: React.FC<MusicTableProps> = ({ data, columns }) => {
 				highlightOnHover
 				withColumnBorders
 				withTableBorder>
-				<Table.Thead>
+				<Table.Thead c="#fff" bg="#228be6">
 					<Table.Tr>{tableColumns}</Table.Tr>
 				</Table.Thead>
 				<Table.Tbody>{tableRows}</Table.Tbody>
@@ -107,4 +118,4 @@ const MusicTable: React.FC<MusicTableProps> = ({ data, columns }) => {
 	);
 };
 
-export default MusicTable;
+export default memo(MusicTable);
