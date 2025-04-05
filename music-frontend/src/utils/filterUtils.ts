@@ -1,3 +1,5 @@
+export type TwoState = 1 | 2;
+
 export const getBadgeColor = (state: number): string => {
     switch (state) {
       case 1:
@@ -12,4 +14,7 @@ export const getBadgeColor = (state: number): string => {
   export const nextTagState = (current: number): 0 | 1 | 2 => {
     return ((current + 1) % 3) as 0 | 1 | 2;
   };
-  
+
+  export const twoStateNext = (current: TwoState): TwoState => {
+    return current === 1 ? 2 : 1;
+  };

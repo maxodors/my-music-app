@@ -1,4 +1,3 @@
-// src/pages/TrackListPage.tsx
 import {
 	Center,
 	Container,
@@ -8,6 +7,7 @@ import {
 	Text,
 	Title,
 	Flex,
+	Box,
   } from '@mantine/core';
   import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
   
@@ -106,21 +106,24 @@ import {
 		<Title order={1}>🎵 Музыкальная база</Title>
   
 		<Stack gap="md" mb="lg">
-		  <Flex gap="md" justify="space-between" wrap="wrap">
-			<SearchInputWithDropdown
-			  tagOptions={tagOptions}
-			  filters={filters}
-			  onTagClick={cycleBadgeState}
-			/>
+        <Flex gap="md" wrap="nowrap" align="flex-start">
+          <Box style={{ flexGrow: 1 }}>
+            <SearchInputWithDropdown
+              tagOptions={tagOptions}
+              filters={filters}
+              onTagClick={cycleBadgeState}
+            />
+          </Box>
   
 			<FilterModal
 			  filters={filters}
 			  setFilters={setFilters}
 			  tagOptions={tagOptions}
+			  
 			/>
 		  </Flex>
   
-		  <SelectedBadges filters={filters} onRemove={removeTag} />
+		  <SelectedBadges filters={filters} onRemove={removeTag} onCycleTag={cycleBadgeState} />
 		</Stack>
   
 		<Container size="xl" h="80%" p={0}>

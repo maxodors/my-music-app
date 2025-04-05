@@ -23,18 +23,19 @@ export const applyFilters = (data: RowData[], filters: Filters): RowData[] => {
 
       const rowSet = new Set(rawValue);
 
-      for (const tag of includedTags) {
-        if (!rowSet.has(tag)) return false;
+      if (includedTags.length > 0 && !includedTags.some(tag => rowSet.has(tag))) {
+        return false;
       }
 
-      for (const tag of excludedTags) {
-        if (rowSet.has(tag)) return false;
+      if (excludedTags.some(tag => rowSet.has(tag))) {
+        return false;
       }
     }
 
     return true;
   });
 };
+
 
 export const applySearch = (data: RowData[], search: string): RowData[] => {
   const term = search.toLowerCase();
