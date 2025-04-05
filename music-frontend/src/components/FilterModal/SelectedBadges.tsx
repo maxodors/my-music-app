@@ -1,5 +1,4 @@
-// src/components/FilterModal/SelectedBadges.tsx
-import { Badge } from '@mantine/core';
+import { Badge, Group } from '@mantine/core';
 import { columnsTitles } from 'common/constants';
 import { Filters } from 'common/types/app';
 import { getBadgeColor } from 'src/utils/filterUtils';
@@ -11,7 +10,7 @@ interface SelectedBadgesProps {
 
 const SelectedBadges: React.FC<SelectedBadgesProps> = ({ filters, onRemove }) => {
   return (
-    <>
+    <Group wrap="wrap" gap="xs">
       {Object.entries(filters).flatMap(([category, tags]) =>
         Object.entries(tags)
           .filter(([, state]) => state !== 0)
@@ -33,7 +32,7 @@ const SelectedBadges: React.FC<SelectedBadgesProps> = ({ filters, onRemove }) =>
             </Badge>
           ))
       )}
-    </>
+    </Group>
   );
 };
 

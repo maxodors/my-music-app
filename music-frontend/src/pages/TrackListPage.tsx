@@ -7,6 +7,7 @@ import {
 	Stack,
 	Text,
 	Title,
+	Flex,
   } from '@mantine/core';
   import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
   
@@ -105,19 +106,19 @@ import {
 		<Title order={1}>🎵 Музыкальная база</Title>
   
 		<Stack gap="md" mb="lg">
-		  <Group justify="flex-end">
+		  <Flex gap="md" justify="space-between" wrap="wrap">
+			<SearchInputWithDropdown
+			  tagOptions={tagOptions}
+			  filters={filters}
+			  onTagClick={cycleBadgeState}
+			/>
+  
 			<FilterModal
 			  filters={filters}
 			  setFilters={setFilters}
 			  tagOptions={tagOptions}
 			/>
-		  </Group>
-  
-		  <SearchInputWithDropdown
-			tagOptions={tagOptions}
-			filters={filters}
-			onTagClick={cycleBadgeState}
-		  />
+		  </Flex>
   
 		  <SelectedBadges filters={filters} onRemove={removeTag} />
 		</Stack>
