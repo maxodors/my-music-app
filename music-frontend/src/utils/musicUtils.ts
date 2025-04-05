@@ -1,4 +1,4 @@
-import { BASE_URL, FILTER_CATEGORIES, HEADERS, TABLE_ID } from 'src/constants';
+import { BASE_URL, FILTER_CATEGORIES, HEADERS, TABLE_ID } from 'common/constants';
 
 export async function fetchTagOptionsFromMeta(): Promise<
 	Record<string, string[]>
