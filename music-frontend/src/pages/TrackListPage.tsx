@@ -1,3 +1,4 @@
+// src/pages/TrackListPage.tsx
 import {
 	Center,
 	Container,
@@ -9,7 +10,7 @@ import {
   } from '@mantine/core';
   import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
   
-  import { ContentLoader, PageContainer } from 'src/components';
+  import { ContentLoader, PageContainer, FilterModal } from 'src/components';
   import SearchInputWithDropdown from 'src/components/FilterModal/SearchInputWithDropdown';
   import SelectedBadges from 'src/components/FilterModal/SelectedBadges';
   import { useMetaData } from 'src/hooks';
@@ -104,6 +105,14 @@ import {
 		<Title order={1}>🎵 Музыкальная база</Title>
   
 		<Stack gap="md" mb="lg">
+		  <Group justify="flex-end">
+			<FilterModal
+			  filters={filters}
+			  setFilters={setFilters}
+			  tagOptions={tagOptions}
+			/>
+		  </Group>
+  
 		  <SearchInputWithDropdown
 			tagOptions={tagOptions}
 			filters={filters}
