@@ -2,9 +2,10 @@
   "name": "my-music-app",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix music-backend\" \"vite\"",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "start-backend": "cd music-backend && npm run dev",
+    "start-frontend": "cd music-frontend && npm run dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -12,12 +13,14 @@
   "dependencies": {
     "@mantine/core": "^7.17.3",
     "@mantine/hooks": "^7.17.3",
+    "axios": "^1.8.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/axios": "^0.9.36",
     "@types/node": "^22.13.14",
     "@types/qs": "^6.9.18",
     "@types/react": "^19.0.10",
@@ -31,6 +34,7 @@
     "postcss": "^8.5.3",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0"

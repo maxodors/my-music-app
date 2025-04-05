@@ -1,28 +1,30 @@
-import axios from 'axios';
-import { FilterRequest, RowData } from '../types';
+// src/services/trackService.ts
+import { FilterRequest, RowData, NocoDBColumn } from '../types';
 import { applyFilters, applySearch, applySort, paginate } from '../utils/filterUtils';
+import { fetchTrackRows, fetchTableMetadata } from '../repositories/trackRepository';
 
-const BASE_URL = 'https://app.nocodb.com';
-const TABLE_ID = 'm4ylgz2cjhybe4r';
-const API_TOKEN = '5gnZxL7hkZs7X9ccjjqMmV7M17_sIDT_nedtkoAQ';
+let cachedColumns: NocoDBColumn[] | null = null;
+let lastFetchedColumns = 0;
+const COLUMN_CACHE_DURATION = 5 * 60 * 1000;
 
-const HEADERS = {
-  'xc-token': API_TOKEN,
-  'Content-Type': 'application/json',
-};
+let cachedData: RowData[] | null = null;
+let lastFetchedData: number = 0;
+const DATA_CACHE_DURATION = 5 * 60 * 1000;
 
-export async function fetchRawData(): Promise<RowData[]> {
-    const res = await axios.get(
-      `${BASE_URL}/api/v2/tables/${TABLE_ID}/records?page=1&limit=1000`,
-      { headers: HEADERS }
-    );
-  
-    const valid = res.data.list.filter((row: RowData) => {
-      return row && Object.keys(row).length > 0 && row['Название'];
-    });
-  
-    return valid;
+export async function fetchRawData(forceRefresh = false): Promise<RowData[]> {
+  const now = Date.now();
+
+  if (!forceRefresh && cachedData && now - lastFetchedData < DATA_CACHE_DURATION) {
+    return cachedData;
   }
+
+  const data = await fetchTrackRows();
+
+  cachedData = data;
+  lastFetchedData = now;
+
+  return data;
+}
 
 export const fetchFilteredTracks = async ({
   filters,
@@ -32,28 +34,24 @@ export const fetchFilteredTracks = async ({
   sortOrder = 'asc',
   search,
 }: FilterRequest) => {
-  const raw = await fetchRawData();
+  const rawRows = await fetchRawData();
 
-  const normalized = raw.map((row) => {
+  const normalizedRows = rawRows.map((row) => {
     const clone = { ...row };
     for (const key of Object.keys(filters)) {
       const val = clone[key];
       if (typeof val === 'string') {
-        clone[key] = val
-          .split(',')
-          .map((v) => v.trim())
-          .filter(Boolean); 
+        clone[key] = val.split(',').map((v) => v.trim()).filter(Boolean);
       }
     }
     return clone;
   });
 
-  let result = applyFilters(normalized, filters);
+  let filteredRows = applyFilters(normalizedRows, filters);
+  if (search?.trim()) filteredRows = applySearch(filteredRows, search);
+  filteredRows = applySort(filteredRows, sortBy, sortOrder);
 
-  if (search?.trim()) result = applySearch(result, search);
-  result = applySort(result, sortBy, sortOrder);
-
-  const { paginated, total, pages, page: safePage } = paginate(result, page, limit);
+  const { paginated, total, pages, page: safePage } = paginate(filteredRows, page, limit);
 
   return {
     results: paginated,
@@ -62,3 +60,18 @@ export const fetchFilteredTracks = async ({
     page: safePage,
   };
 };
+
+export async function fetchMetadata(): Promise<NocoDBColumn[]> {
+  const now = Date.now();
+
+  if (cachedColumns && now - lastFetchedColumns < COLUMN_CACHE_DURATION) {
+    return cachedColumns;
+  }
+
+  const columns = await fetchTableMetadata();
+
+  cachedColumns = columns;
+  lastFetchedColumns = now;
+
+  return columns;
+}

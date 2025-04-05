@@ -17,4 +17,19 @@ export interface Filters {
     sortOrder?: 'asc' | 'desc';
     search?: string;
   }
+
+  export interface NocoDBColumn {
+    id: string;
+    column_name: string;
+    title: string;
+    type?: string;
+    description?: string;
+    system?: boolean;
+    colOptions?: {
+      options?: {
+        title: string;
+        color?: string;
+      }[];
+    };
+  }
   
